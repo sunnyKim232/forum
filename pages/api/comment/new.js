@@ -18,6 +18,7 @@ export default async function handler(request, response) {
       comment: request.body.comment,
       parent: new ObjectId(request.body.contentId),
       author: session.user.email,
+      name: session.user.name,
     };
     let db = (await connectDB).db("forum");
     await db.collection("comment").insertOne(result);

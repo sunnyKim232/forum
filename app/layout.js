@@ -38,7 +38,7 @@ export default async function RootLayout({ children }) {
           ) : (
             <LoginBtn />
           )}
-          <DarkMode />
+          <DarkMode current={res.value} />
         </div>
         {children}
       </body>

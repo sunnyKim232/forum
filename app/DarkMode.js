@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
-export default function DarkMode() {
+export default function DarkMode({ current }) {
   let router = useRouter();
   useEffect(() => {
     let cookie = ("; " + document.cookie).split(`; mode=`).pop().split(";")[0];
@@ -11,10 +11,9 @@ export default function DarkMode() {
       document.cookie = "mode=light; max-age=" + 3600 * 24 * 400;
   }, []);
 
-  let cookie = ("; " + document.cookie).split(`; mode=`).pop().split(";")[0];
   return (
     <>
-      {cookie == "light" ? (
+      {current == "light" ? (
         <span
           onClick={() => {
             document.cookie = "mode=dark; max-age=" + 3600 * 24 * 400;

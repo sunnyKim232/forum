@@ -30,6 +30,7 @@ export default async function RootLayout({ children }) {
             Appleforum
           </Link>
           <Link href="/list">List</Link>
+          <Link href="/photos">Photos</Link>
           {session != null ? (
             <span>
               {session.user.name}
@@ -38,7 +39,7 @@ export default async function RootLayout({ children }) {
           ) : (
             <LoginBtn />
           )}
-          <DarkMode current={res.value} />
+          {/* <DarkMode current={res.value} /> */}
         </div>
         {children}
       </body>

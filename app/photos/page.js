@@ -1,7 +1,5 @@
 import { connectDB } from "@/util/database";
-import Link from "next/link";
-import DetailLink from "./DetailLink";
-import ListItem from "./ListItem";
+import PhotoItem from "./PhotoItem";
 
 export const revalidate = 20;
 
@@ -12,10 +10,10 @@ export default async function List() {
     <div className="list-bg">
       {result.map((item) => {
         return (
-          <ListItem
-            contentId={item._id.toString()}
-            title={item.title}
-            content={item.content}
+          <PhotoItem
+          // contentId={item._id.toString()}
+          // title={item.title}
+          // content={item.content}
           />
         );
       })}

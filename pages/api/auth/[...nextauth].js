@@ -9,7 +9,7 @@ export const authOptions = {
   providers: [
     GithubProvider({
       clientId: "8993675eb9e3c7f67f54",
-      clientSecret: "2e388083b3a8dfb9761b619c19732d41e4b86583",
+      clientSecret: "375bed32613e213e4882c82882fb1f8720f6a360",
     }),
 
     CredentialsProvider({
@@ -56,8 +56,9 @@ export const authOptions = {
     //user변수는 DB의 유저정보담겨있고 token.user에 뭐 저장하면 jwt에 들어갑니다.
     jwt: async ({ token, user }) => {
       if (user) {
+        console.log(user);
         token.user = {};
-        token.user._id = user._id.toString();
+        token.user._id = user._id;
         token.user.name = user.name;
         token.user.email = user.email;
         token.user.role = user.role;

@@ -16,5 +16,5 @@ export default async function Upload() {
       </div>
     );
   }
-  return <ImageUpload />;
+  return <ImageUpload userId={session.user.email} />;
 }

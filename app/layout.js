@@ -18,7 +18,10 @@ export const metadata = {
 export default async function RootLayout({ children }) {
   let session = await getServerSession(authOptions);
 
-  let res = cookies().get("mode");
+  const cookieStore = cookies();
+  let res = cookieStore.has("mode");
+
+  console.log(res);
 
   return (
     <html lang="en">
@@ -26,20 +29,25 @@ export default async function RootLayout({ children }) {
         className={res != undefined && res.value == "dark" ? "dark-mode" : ""}
       >
         <div className="navbar">
-          <Link href="/" className="logo">
-            Appleforum
-          </Link>
-          <Link href="/list">List</Link>
-          <Link href="/photos">Photos</Link>
-          {session != null ? (
-            <span>
-              {session.user.name}
-              <LogoutBtn />
-            </span>
-          ) : (
-            <LoginBtn />
-          )}
+          <div>
+            <Link href="/" className="logo">
+              Appleforum
+            </Link>
+            <Link href="/list">List</Link>
+            <Link href="/photos">Photos</Link>
+            {session != null ? (
+              <span>
+                {session.user.name}
+                <LogoutBtn />
+              </span>
+            ) : (
+              <LoginBtn />
+            )}
+          </div>
+
           {/* <DarkMode current={res.value} /> */}
+          <Link href="/upload">Upload</Link>
+          <Link href="/write">Post</Link>
         </div>
         {children}
       </body>

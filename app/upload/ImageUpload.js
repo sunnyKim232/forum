@@ -1,38 +1,38 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
+import { GoX } from "react-icons/go";
 
-export default function ImageUpload() {
+export default function ImageUpload({ userId }) {
   const imgRef = useRef();
 
-  const [image, setImage] = useState("");
+  const [imageName, setImageName] = useState("");
   const [previewImg, setPreviewImg] = useState("");
+  const [title, setTitle] = useState("");
+  const [file, setFile] = useState(null);
 
-  function uploadToClient(e) {}
+  async function handleUpload() {
+    const body = new FormData();
+    body.append("image", file);
+    body.append("title", JSON.stringify(title));
 
-  function handleUpload() {}
-
-  const previewFn = (file) => {
-    const target = file.files[0];
-    console.log(target.type.split("/")[0]);
-
-    if (
-      target.name.split(".")[1].toLowerCase() !== "jpg" &&
-      target.name.split(".")[1].toLowerCase() !== "png" &&
-      target.name.split(".")[1].toLowerCase() !== "jpeg" &&
-      target.name.split(".")[1].toLowerCase() !== "mp4"
-    ) {
-      file.value = "";
-      setPreviewImg("");
-      return;
+    try {
+      await fetch("/api/photos/upload", {
+        method: "POST",
+        body: body,
+      }).then((res) => {
+        console.log(res);
+      });
+    } catch (e) {
+      console.log(e);
     }
-    const fileReader = new FileReader();
-    fileReader.readAsDataURL(file.files[0]);
-    fileReader.onloadend = () => {
-      const previewImgUrl = fileReader.result;
-      setPreviewImg(previewImgUrl);
-    };
-  };
+  }
+
+  function closeFn() {
+    setPreviewImg("");
+    setImageName("");
+    setFile(null);
+  }
 
   useEffect(() => {
     function dragoverFn(e) {
@@ -53,43 +53,54 @@ export default function ImageUpload() {
 
       this.style.backgroundColor = "";
       this.style.border = "";
-      previewFn(e.dataTransfer);
+      setPreviewImg(URL.createObjectURL(e.dataTransfer.files[0]));
+      setFile(e.dataTransfer.files[0]);
     }
 
     imgRef.current.addEventListener("dragover", dragoverFn);
     imgRef.current.addEventListener("dragleave", dragleaveFn);
     imgRef.current.addEventListener("drop", dropFn);
-  }, [image]);
+  }, [previewImg]);
 
   return (
-    <div className="p-20">
+    <div className="p-20" style={{ width: "50rem" }}>
       <h4>사진 업로드 페이지 입니다.</h4>
+      <input
+        name="title"
+        placeholder="제목"
+        style={{ width: "100%" }}
+        onChange={(e) => {
+          setTitle(e.target.value);
+        }}
+      ></input>
       {previewImg ? (
-        <img src={previewImg} alt="preview" width="300px" />
+        <>
+          <img src={previewImg} alt="preview" width="300px" />
+          <GoX onClick={closeFn} />
+          <p>{imageName}</p>
+        </>
       ) : (
-        <></>
+        <>
+          <div ref={imgRef} style={{ border: "1px dotted black" }}>
+            <label htmlFor="fileUpload">
+              <p>클릭하거나 드래그하여 업로드</p>
+            </label>
+            <input
+              id="fileUpload"
+              type="file"
+              name="image"
+              placeholder="이미지"
+              style={{ display: "none", width: "100%" }}
+              onChange={(e) => {
+                const file = e.target.files[0];
+                setPreviewImg(URL.createObjectURL(file));
+                setFile(file);
+              }}
+            />
+          </div>
+        </>
       )}
-
-      <form>
-        <input name="title" placeholder="제목"></input>
-        <div ref={imgRef}>
-          <label>
-            <p>클릭하거나 드래그하여 업로드</p>
-          </label>
-          <input
-            type="file"
-            name="image"
-            placeholder="이미지"
-            style={{ display: "none", width: "100%" }}
-            onChange={(e) => {
-              previewFn(e.target);
-              setImage(e.target.files[0]);
-            }}
-          />
-        </div>
-
-        <button onClick={handleUpload}>제출</button>
-      </form>
+      <button onClick={handleUpload}>제출</button>
     </div>
   );
 }

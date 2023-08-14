@@ -46,16 +46,14 @@ export default async function handler(request, response) {
     return response.status(200).json(result);
   }
   if (request.method === "POST") {
-    console.log("request: ", request.title);
     try {
       if (session) {
         await fs.readdir(path.join(process.cwd() + "/public", "/images"));
       }
     } catch (e) {
       await fs.mkdir(path.join(process.cwd() + "/public", "/images"));
-      response.status(200).json("성공");
     }
     await readFile(request, true, session);
-    return response;
+    return response.status(200).json("성공");
   }
 }

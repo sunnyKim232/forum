@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { GoX } from "react-icons/go";
+import Notification from "../Notification";
 
 export default function ImageUpload({ userId }) {
   const imgRef = useRef();
@@ -10,6 +11,7 @@ export default function ImageUpload({ userId }) {
   const [previewImg, setPreviewImg] = useState("");
   const [title, setTitle] = useState("");
   const [file, setFile] = useState(null);
+  const [open, setOpen] = useState(false);
 
   async function handleUpload() {
     const body = new FormData();
@@ -21,7 +23,7 @@ export default function ImageUpload({ userId }) {
         method: "POST",
         body: body,
       }).then((res) => {
-        console.log(res);
+        setOpen(true);
       });
     } catch (e) {
       console.log(e);
@@ -34,7 +36,12 @@ export default function ImageUpload({ userId }) {
     setFile(null);
   }
 
+  function handleClose() {
+    setOpen(false);
+  }
+
   useEffect(() => {
+    if (!imgRef.current) return;
     function dragoverFn(e) {
       e.preventDefault();
       this.style.backgroundColor = "#dee2e6";
@@ -100,6 +107,7 @@ export default function ImageUpload({ userId }) {
           </div>
         </>
       )}
+      <Notification open={open} handleClose={handleClose} />
       <button onClick={handleUpload}>제출</button>
     </div>
   );

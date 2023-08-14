@@ -32,4 +32,17 @@ export async function middleware(request) {
       return newCookie;
     }
   }
+
+  if (request.nextUrl.pathname.startsWith("/")) {
+    const newCookie = NextResponse.next();
+    if (request.cookies.has("mode")) {
+      return NextResponse.next();
+    } else {
+      newCookie.cookies.set({
+        name: "mode",
+        value: "light",
+      });
+      return newCookie;
+    }
+  }
 }

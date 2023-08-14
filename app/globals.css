@@ -56,6 +56,17 @@ a {
 .dark-mode .navbar {
   background: #222;
 }
+
+.dark-mode div {
+  background: #222;
+}
+
+.dark-mode p,
+.dark-mode span,
+.dark-mode h4 {
+  color: white;
+}
+
 .dark-mode .navbar a {
   color: white;
 }

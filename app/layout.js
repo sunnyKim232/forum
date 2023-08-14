@@ -7,6 +7,7 @@ import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import LogoutBtn from "./LogoutBtn";
 import { cookies } from "next/headers";
 import DarkMode from "./DarkMode";
+import RefreshButton from "@/pages/api/RefreshBtn";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,9 +20,7 @@ export default async function RootLayout({ children }) {
   let session = await getServerSession(authOptions);
 
   const cookieStore = cookies();
-  let res = cookieStore.has("mode");
-
-  console.log(res);
+  let res = cookieStore.get("mode");
 
   return (
     <html lang="en">
@@ -29,25 +28,38 @@ export default async function RootLayout({ children }) {
         className={res != undefined && res.value == "dark" ? "dark-mode" : ""}
       >
         <div className="navbar">
-          <div>
-            <Link href="/" className="logo">
-              Appleforum
-            </Link>
-            <Link href="/list">List</Link>
-            <Link href="/photos">Photos</Link>
-            {session != null ? (
-              <span>
-                {session.user.name}
-                <LogoutBtn />
-              </span>
-            ) : (
-              <LoginBtn />
-            )}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "baseline",
+              flexWrap: "wrap",
+              justifyContent: "space-between",
+            }}
+          >
+            <div>
+              <Link href="/" className="logo">
+                Appleforum
+              </Link>
+              <Link href="/list">List</Link>
+              <Link href="/photos">Photos</Link>
+              <RefreshButton />
+              <div>
+                <Link href="/upload">Upload</Link>
+                <Link href="/write">Post</Link>
+              </div>
+            </div>
+            <div>
+              <DarkMode current={res.value} />
+              {session != null ? (
+                <span>
+                  {session.user.name}
+                  <LogoutBtn />
+                </span>
+              ) : (
+                <LoginBtn />
+              )}
+            </div>
           </div>
-
-          {/* <DarkMode current={res.value} /> */}
-          <Link href="/upload">Upload</Link>
-          <Link href="/write">Post</Link>
         </div>
         {children}
       </body>

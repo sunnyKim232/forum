@@ -1,6 +1,4 @@
 import { connectDB } from "@/util/database";
-import Link from "next/link";
-import DetailLink from "./DetailLink";
 import ListItem from "./ListItem";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
@@ -13,17 +11,23 @@ export default async function List() {
   let session = await getServerSession(authOptions);
   return (
     <div className="list-bg">
-      {result.map((item) => {
-        return (
-          <ListItem
-            contentId={item._id.toString()}
-            title={item.title}
-            content={item.content}
-            author={item.author ? item.author : null}
-            session={session}
-          />
-        );
-      })}
+      {result.length >= 1 ? (
+        result.map((item) => {
+          return (
+            <>
+              <ListItem
+                contentId={item._id.toString()}
+                title={item.title}
+                content={item.content}
+                author={item.author ? item.author : null}
+                session={session}
+              />
+            </>
+          );
+        })
+      ) : (
+        <p>등록된 글이 없습니다.</p>
+      )}
     </div>
   );
 }

@@ -1,16 +1,17 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { AiOutlineRedo } from "react-icons/ai";
 
-export default function DetailLink() {
+export default function RefreshButton() {
   let router = useRouter();
   return (
-    <button
+    <span
       onClick={() => {
         router.refresh();
       }}
     >
-      Button
-    </button>
+      <AiOutlineRedo />
+    </span>
   );
 }

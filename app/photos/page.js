@@ -5,18 +5,18 @@ export const revalidate = 20;
 
 export default async function List() {
   const db = (await connectDB).db("forum");
-  let result = await db.collection("post").find().toArray();
+  let result = await db.collection("photos").find().toArray();
   return (
     <div className="list-bg">
-      {result.map((item) => {
-        return (
-          <PhotoItem
-          // contentId={item._id.toString()}
-          // title={item.title}
-          // content={item.content}
-          />
-        );
-      })}
+      {result.length >= 1 ? (
+        result.map((item) => {
+          return (
+            <PhotoItem url={"/images/" + item.imageName} title={item.title} />
+          );
+        })
+      ) : (
+        <p>등록된 사진이 없습니다.</p>
+      )}
     </div>
   );
 }

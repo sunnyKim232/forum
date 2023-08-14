@@ -1,7 +1,5 @@
 "use client";
 import Link from "next/link";
-import DetailLink from "./DetailLink";
-import DeleteBtn from "./DeleteBtn";
 
 export default function ListItem({
   contentId,
@@ -66,7 +64,6 @@ export default function ListItem({
             </span>
           ))}
         <p>{content}</p>
-        <DetailLink />
       </div>
     </>
   );

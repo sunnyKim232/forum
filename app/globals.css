@@ -70,3 +70,9 @@ a {
 .dark-mode .navbar a {
   color: white;
 }
+
+.photo-background {
+  background-color: #9c9a9a;
+  width: "100%";
+  height: "100%";
+}

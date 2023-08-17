@@ -11,7 +11,7 @@ export default async function List() {
   let session = await getServerSession(authOptions);
   return (
     <div className="list-bg">
-      {result.length >= 1 ? (
+      {result.reverse().length >= 1 ? (
         result.map((item) => {
           return (
             <>

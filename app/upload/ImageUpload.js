@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import React, { useRef, useState } from "react";
 import { GoX } from "react-icons/go";
 import ButtonSubmit from "./ButtonSubmit";
-import { uploadPhoto } from "@/actions/uploadActions";
+import { revalidate, uploadPhoto } from "@/actions/uploadActions";
 
 export default function ImageUpload({ userId }) {
   const formRef = useRef();
@@ -38,6 +38,11 @@ export default function ImageUpload({ userId }) {
     });
 
     const res = await uploadPhoto(formData);
+    if (!res?.errMsg) {
+      setFiles([]);
+      formRef.current.reset();
+      revalidate("/photos");
+    }
   }
 
   function closeFn(index) {
@@ -74,7 +79,7 @@ export default function ImageUpload({ userId }) {
 
   return (
     <>
-      <div className="p-20" style={{ width: "50rem" }}>
+      <div className="list-bg">
         <h4>사진 업로드 페이지 입니다.</h4>
 
         <div>

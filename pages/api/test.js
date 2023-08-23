@@ -8,5 +8,4 @@ export default async function handler(request, response) {
 
     return result.status(200).redirect("/list");
   }
-  console.log("test!!!", request.query);
 }

@@ -8,7 +8,7 @@ export default async function Upload() {
 
   if (!session) {
     return (
-      <div>
+      <div className="list-bg">
         <p>로그인 해주세요.</p>
         <Link href="/" className="logo">
           메인페이지로 이동

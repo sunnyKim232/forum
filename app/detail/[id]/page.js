@@ -13,11 +13,29 @@ export default async function Detail(props) {
   if (result === null) {
     return notFound();
   }
+
   return (
-    <div>
-      <h4>상세페이지</h4>
-      <h4>{result.title}</h4>
+    <div className="list-bg">
+      <div style={{ backgroundColor: "black", color: "white", padding: "2px" }}>
+        <h4>{result.title}</h4>
+      </div>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "space-between",
+        }}
+      >
+        <span>
+          {new ObjectId(props.params.id).getTimestamp().toLocaleDateString()}
+          {new ObjectId(props.params.id).getTimestamp().toLocaleTimeString()}
+        </span>
+        <span>{result.author}</span>
+      </div>
+
+      <hr />
       <p>{result.content}</p>
+      <br />
 
       <Like contentId={props.params.id} />
       <Comment id={props.params.id} />

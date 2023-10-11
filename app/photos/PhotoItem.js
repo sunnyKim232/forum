@@ -2,9 +2,10 @@
 
 import { deletePhoto, revalidate } from "@/actions/uploadActions";
 import Image from "next/image";
+import Link from "next/link";
 import { useTransition } from "react";
 
-export default function PhotoItem({ url, role, publicId }) {
+export default function PhotoItem({ id, url, role, publicId }) {
   const [isPending, startTransition] = useTransition();
 
   async function handleDelete(e) {
@@ -31,21 +32,23 @@ export default function PhotoItem({ url, role, publicId }) {
   }
   return (
     <>
-      {/* <Link href={`/photos/${id}`} style={{ textDecoration: "none" }}> */}
-      <div
-        className="list-item"
-        style={{ width: "510px", display: "flex", justifyContent: "center" }}
-      >
-        <div>
-          <Image src={url} width="500" height="500" />
-          {role == "admin" && (
-            <span onClick={(e) => handleDelete(e)}>
-              {isPending ? "Loading" : "🗑"}
-            </span>
-          )}
+      <Link href={`/photos/${id}`} style={{ textDecoration: "none" }}>
+        <div
+          className="list-item"
+          style={{ width: "510px", display: "flex", justifyContent: "center" }}
+        >
+          <div>
+            <Image src={url} width="500" height="500" alt="url" />
+            {role == "admin" && (
+              <button className="outlined">
+                <span onClick={(e) => handleDelete(e)}>
+                  {isPending ? "Loading" : "🗑 삭제"}
+                </span>
+              </button>
+            )}
+          </div>
         </div>
-      </div>
-      {/* </Link> */}
+      </Link>
     </>
   );
 }

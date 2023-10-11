@@ -2,20 +2,20 @@
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { GoX } from "react-icons/go";
 import ButtonSubmit from "./ButtonSubmit";
-import { revalidate, uploadPhoto } from "@/actions/uploadActions";
+import { uploadPhoto } from "@/actions/uploadActions";
 
 export default function ImageUpload({ userId }) {
-  const formRef = useRef();
+  const imgRef = useRef();
   const router = useRouter();
 
   const [files, setFiles] = useState([]);
   const [message, setMessage] = useState("");
 
-  async function handleInputFiles(e) {
-    const files = e.target.files;
+  async function handleInputFiles(data) {
+    const files = data.files;
     const newFiles = [...files].filter((file) => {
       if (file.size < 1024 * 1024 && file.type.startsWith("image/")) {
         return file;
@@ -25,7 +25,6 @@ export default function ImageUpload({ userId }) {
     });
 
     setFiles((prev) => [...newFiles, ...prev]);
-    formRef.current.reset();
   }
 
   async function handleUpload() {
@@ -38,10 +37,10 @@ export default function ImageUpload({ userId }) {
     });
 
     const res = await uploadPhoto(formData);
+
     if (!res?.errMsg) {
       setFiles([]);
-      formRef.current.reset();
-      revalidate("/photos");
+      router.push("/photos");
     }
   }
 
@@ -50,71 +49,75 @@ export default function ImageUpload({ userId }) {
     setFiles(newFiles);
   }
 
-  // useEffect(() => {
-  //   if (!imgRef.current) return;
-  //   function dragoverFn(e) {
-  //     e.preventDefault();
-  //     this.style.backgroundColor = "#dee2e6";
-  //     this.style.border = "1px dotted #228be6";
-  //   }
+  useEffect(() => {
+    if (!imgRef.current) return;
+    function dragoverFn(e) {
+      e.preventDefault();
+      this.style.backgroundColor = "#dee2e6";
+      this.style.border = "1px dotted #228be6";
+    }
 
-  //   function dragleaveFn(e) {
-  //     e.preventDefault();
-  //     this.style.backgroundColor = "";
-  //     this.style.border = "";
-  //   }
+    function dragleaveFn(e) {
+      e.preventDefault();
+      this.style.backgroundColor = "";
+      this.style.border = "1px dotted black";
+    }
 
-  //   function dropFn(e) {
-  //     console.log("drop");
-  //     e.preventDefault();
+    function dropFn(e) {
+      console.log("drop");
+      e.preventDefault();
+      e.stopImmediatePropagation();
 
-  //     this.style.backgroundColor = "";
-  //     this.style.border = "";
-  //   }
+      this.style.backgroundColor = "";
+      this.style.border = "1px dotted black";
+      handleInputFiles(e.dataTransfer);
+    }
 
-  //   imgRef.current.addEventListener("dragover", dragoverFn);
-  //   imgRef.current.addEventListener("dragleave", dragleaveFn);
-  //   imgRef.current.addEventListener("drop", dropFn);
-  // }, [previewImg]);
+    imgRef.current.addEventListener("dragover", dragoverFn);
+    imgRef.current.addEventListener("dragleave", dragleaveFn);
+    imgRef.current.addEventListener("drop", dropFn);
+  }, [files]);
 
   return (
     <>
       <div className="list-bg">
-        <h4>사진 업로드 페이지 입니다.</h4>
+        <div style={{ width: "50%" }}>
+          <h4>사진 업로드 페이지 입니다.</h4>
 
-        <div>
-          {files.map((file, index) => {
-            let imageUrl = URL.createObjectURL(file);
-            return (
-              <>
-                <Image src={imageUrl} alt="image" width={200} height={200} />
-                <GoX onClick={() => closeFn(index)} />
-              </>
-            );
-          })}
-        </div>
-        <p>{message}</p>
-        <form ref={formRef} action={handleUpload}>
-          <div style={{ border: "1px dotted black", height: "300px" }}>
-            <label htmlFor="fileUpload">
-              <p>클릭하거나 드래그하여 업로드</p>
-            </label>
-            <input
-              id="fileUpload"
-              type="file"
-              name="image"
-              placeholder="이미지"
-              accept="image/*"
-              multiple
-              style={{ display: "none", width: "100%" }}
-              onChange={(e) => {
-                handleInputFiles(e);
-              }}
-            />
+          <div>
+            {files.map((file, index) => {
+              let imageUrl = URL.createObjectURL(file);
+              return (
+                <>
+                  <Image src={imageUrl} alt="image" width={200} height={200} />
+                  <GoX onClick={() => closeFn(index)} />
+                </>
+              );
+            })}
           </div>
+          <p>{message}</p>
+          <form action={handleUpload}>
+            <div ref={imgRef} className="photoDragZone">
+              <label htmlFor="fileUpload">
+                <p>클릭하거나 드래그하여 업로드</p>
+              </label>
+              <input
+                id="fileUpload"
+                type="file"
+                name="image"
+                placeholder="이미지"
+                accept="image/*"
+                multiple
+                style={{ display: "none", width: "100%" }}
+                onChange={(e) => {
+                  handleInputFiles(e.target);
+                }}
+              />
+            </div>
 
-          <ButtonSubmit value="upload" />
-        </form>
+            <ButtonSubmit value="upload" />
+          </form>
+        </div>
       </div>
     </>
   );

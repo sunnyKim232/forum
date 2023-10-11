@@ -1,6 +1,6 @@
 import Link from "next/link";
 import "./globals.css";
-import { Inter } from "next/font/google";
+import { Noto_Sans_KR } from "next/font/google";
 import LoginBtn from "./LoginBtn";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
@@ -8,8 +8,9 @@ import LogoutBtn from "./LogoutBtn";
 import { cookies } from "next/headers";
 import DarkMode from "./DarkMode";
 import RefreshButton from "@/pages/api/RefreshBtn";
+import Image from "next/image";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Noto_Sans_KR({ weight: "300", subsets: ["latin"] });
 
 export const metadata = {
   title: "Create Next App",
@@ -23,7 +24,7 @@ export default async function RootLayout({ children }) {
   let res = cookieStore.get("mode");
 
   return (
-    <html lang="en">
+    <html lang="en" className={inter.className}>
       <body
         className={res != undefined && res.value == "dark" ? "dark-mode" : ""}
       >
@@ -31,33 +32,59 @@ export default async function RootLayout({ children }) {
           <div
             style={{
               display: "flex",
-              alignItems: "baseline",
+              alignItems: "center",
               flexWrap: "wrap",
               justifyContent: "space-between",
             }}
           >
             <div>
-              <Link href="/" className="logo">
-                Appleforum
-              </Link>
-              <Link href="/list">List</Link>
-              <Link href="/photos">Photos</Link>
-              <RefreshButton />
               <div>
-                <Link href="/upload">Upload</Link>
+                <Link href="/list">List</Link>
+                <Link href="/photos">Photos</Link>
+              </div>
+
+              <div>
                 <Link href="/write">Post</Link>
+                <Link href="/upload">Upload</Link>
               </div>
             </div>
+
             <div>
-              <DarkMode current={res.value} />
-              {session != null ? (
-                <span>
-                  {session.user.name}
-                  <LogoutBtn />
-                </span>
-              ) : (
-                <LoginBtn />
-              )}
+              <Link href="/">
+                {res.value == "dark" ? (
+                  <Image
+                    src="/whiteLogo.png"
+                    width={100}
+                    height={100}
+                    alt="home"
+                  />
+                ) : (
+                  <Image
+                    src="/blackLogo.png"
+                    width={100}
+                    height={100}
+                    alt="home"
+                  />
+                )}
+              </Link>
+            </div>
+            <div>
+              <div style={{ display: "flex" }}>
+                {session != null ? (
+                  <div>
+                    <span style={{ marginRight: "10px" }}>
+                      {session.user.name}
+                    </span>
+                    <LogoutBtn />
+                  </div>
+                ) : (
+                  <LoginBtn />
+                )}
+              </div>
+              <div style={{ display: "flex", flexDirection: "row-reverse" }}>
+                <RefreshButton />
+                <DarkMode current={res.value} />
+              </div>
             </div>
           </div>
         </div>

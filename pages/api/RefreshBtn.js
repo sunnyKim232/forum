@@ -10,6 +10,7 @@ export default function RefreshButton() {
       onClick={() => {
         router.refresh();
       }}
+      style={{ padding: "5px 10px 0 10px" }}
     >
       <AiOutlineRedo />
     </span>

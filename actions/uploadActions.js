@@ -5,6 +5,11 @@ import { v4 as uuidv4 } from "uuid";
 import os from "os";
 import cloudinary from "cloudinary";
 import { revalidatePath } from "next/cache";
+import { connectDB } from "@/util/database";
+import { getServerSession } from "next-auth";
+import { authOptions } from "../pages/api/auth/[...nextauth]";
+import Photo from "@/models/photoModel";
+import { ObjectId } from "mongodb";
 
 cloudinary.config({
   cloud_name: process.env.CLOUD_NAME,
@@ -46,16 +51,37 @@ async function uploadPhotosToCloudinary(newFiles) {
 }
 
 export async function uploadPhoto(formData) {
+  let session = await getServerSession(authOptions);
   try {
-    const newFiles = await savePhotosToLocal(formData);
+    if (session) {
+      // local 파일 저장
+      const newFiles = await savePhotosToLocal(formData);
 
-    const photos = await uploadPhotosToCloudinary(newFiles);
+      // claudinary 에 파일 저장
+      const photos = await uploadPhotosToCloudinary(newFiles);
 
-    // 업로드 후  temp 폴더에 있는 사진 삭제해줌 (?)
-    newFiles.map((file) => fs.link(file.filepath));
+      // 업로드 후  temp 폴더에 있는 사진 삭제해줌 (?)
+      newFiles.map((file) => fs.link(file.filepath));
 
-    await delay(1000);
-    revalidatePath("/photos");
+      // db 저장
+
+      const newPhotos = photos.map((photo) => {
+        const newPhoto = new Photo({
+          public_id: photo.public_id,
+          secure_url: photo.secure_url,
+          author: session.user.email,
+          createdDate: new Date().toISOString(),
+          width: photo.width,
+          height: photo.height,
+        });
+        return newPhoto;
+      });
+
+      const db = (await connectDB).db("forum");
+      await db.collection("photos").insertMany(newPhotos);
+
+      await delay(1000);
+    }
   } catch (e) {
     return { errMsg: e.message };
   }
@@ -63,12 +89,21 @@ export async function uploadPhoto(formData) {
 
 export async function getAllPhotos() {
   try {
-    const { resources } = await cloudinary.v2.search
-      .expression("folder:nextjs_upload/*")
-      .sort_by("created_at", "desc")
-      .max_results(500)
-      .execute();
-    return resources;
+    // cloudinary 에서 찾아서 보여주는건 로딩 시간이 오래걸림
+    // const { resources } = await cloudinary.v2.search
+    //   .expression("folder:nextjs_upload/*")
+    //   .sort_by("created_at", "desc")
+    //   .max_results(500)
+    //   .execute();
+
+    const db = (await connectDB).db("forum");
+    const resources = await db
+      .collection("photos")
+      .find()
+      .sort("createdDate")
+      .toArray();
+
+    return resources.reverse();
   } catch (e) {
     return { errMsg: e.message };
   }
@@ -76,6 +111,9 @@ export async function getAllPhotos() {
 
 export async function deletePhoto(public_id) {
   try {
+    const db = (await connectDB).db("forum");
+    await db.collection("photos").deleteOne({ _id: new ObjectId(public_id) });
+
     await cloudinary.v2.uploader.destroy(public_id);
 
     return { msg: "success!" };
@@ -84,6 +122,48 @@ export async function deletePhoto(public_id) {
   }
 }
 
+export async function getPhoto(id) {
+  try {
+    // cloudinary 에서 찾아서 보여주는건 로딩 시간이 오래걸림
+    // const { resources } = await cloudinary.v2.search
+    //   .expression("folder:nextjs_upload/*")
+    //   .sort_by("created_at", "desc")
+    //   .max_results(500)
+    //   .execute();
+
+    const db = (await connectDB).db("forum");
+    const photo = await db
+      .collection("photos")
+      .findOne({ _id: new ObjectId(id) });
+
+    return photo;
+  } catch (e) {
+    return { errMsg: e.message };
+  }
+}
+
 export async function revalidate(path) {
   revalidatePath(path);
+}
+
+export async function getNextId(id) {
+  const db = (await connectDB).db("forum");
+  const allPhotos = await db.collection("photos").find().toArray();
+
+  const findCurrentDocument = allPhotos.forEach((photo, index) => {
+    return photo._id.toString() == photo ? 1 : 0;
+  });
+
+  // const db = (await connectDB).db("forum");
+
+  // const nextDocument = db
+  //   .collection("photos")
+  //   .find({ _id: new ObjectId() })
+  //   .sort({ _id: 1 })
+  //   .limit(2)
+  //   .toArray();
+
+  // return nextDocument;
+  console.log(findCurrentDocument);
+  // return findCurrentDocument;
 }

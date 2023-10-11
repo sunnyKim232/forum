@@ -1,3 +1,13 @@
+import { postCommentOrder, postLikeOrder } from "@/actions/postActions";
+import PostTable from ".//common/PostTable";
+
 export default async function Home() {
-  return <div></div>;
+  const commentOrderPost = await postCommentOrder();
+  const likeOrderPost = await postLikeOrder();
+  return (
+    <div className="list-bg">
+      <PostTable header="댓글이 많은 게시글" list={commentOrderPost} />
+      <PostTable header="좋아요가 많은 게시글" list={likeOrderPost} />
+    </div>
+  );
 }

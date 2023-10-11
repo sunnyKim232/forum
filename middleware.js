@@ -11,7 +11,16 @@ export async function middleware(request) {
   }
 
   // 유저정보가없을경우에는 글쓰기 기능 막아주기
-  if (request.nextUrl.pathname.startsWith("/write")) {
+  // if (request.nextUrl.pathname.startsWith("/write")) {
+  //   if (session == null) {
+  //     return NextResponse.redirect(
+  //       new URL("http://localhost:3000/"),
+  //       request.url
+  //     );
+  //   }
+  // }
+
+  if (request.nextUrl.pathname.startsWith("/edit")) {
     if (session == null) {
       return NextResponse.redirect(
         new URL("http://localhost:3000/"),

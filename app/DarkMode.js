@@ -3,6 +3,8 @@
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
+import { BsFillMoonFill, BsFillSunFill } from "react-icons/bs";
+
 export default function DarkMode({ current }) {
   let router = useRouter();
   useEffect(() => {
@@ -12,7 +14,7 @@ export default function DarkMode({ current }) {
   }, []);
 
   return (
-    <>
+    <div style={{ padding: "5px 0px 0px 10px" }}>
       {current == "light" ? (
         <span
           onClick={() => {
@@ -20,7 +22,7 @@ export default function DarkMode({ current }) {
             router.refresh();
           }}
         >
-          🌙
+          <BsFillMoonFill />
         </span>
       ) : (
         <span
@@ -29,9 +31,9 @@ export default function DarkMode({ current }) {
             router.refresh();
           }}
         >
-          ☀️
+          <BsFillSunFill />
         </span>
       )}
-    </>
+    </div>
   );
 }

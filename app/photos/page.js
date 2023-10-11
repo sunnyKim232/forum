@@ -2,11 +2,9 @@ import PhotoItem from "./PhotoItem";
 import { getAllPhotos } from "@/actions/uploadActions";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
+import Link from "next/link";
 
 export default async function List() {
-  // const db = (await connectDB).db("forum");
-  // let result = await db.collection("photos").find().toArray();
-
   let session = await getServerSession(authOptions);
 
   const photos = await getAllPhotos();
@@ -33,13 +31,14 @@ export default async function List() {
       {photos.length >= 1 ? (
         photos.map((photo) => {
           return (
-            <>
+            <div key={photo.public_id}>
               <PhotoItem
+                id={photo._id.toString()}
                 url={photo.secure_url}
-                role={session.user.role}
+                role={session?.user.role}
                 publicId={photo.public_id}
               />
-            </>
+            </div>
           );
         })
       ) : (

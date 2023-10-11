@@ -19,9 +19,16 @@ export default async function handler(request, response) {
 
     let check = true;
 
-    likeList.map((item) => {
+    likeList.map(async (item) => {
       if (item.author.toString() == session.user._id) {
         check = false;
+        let result = {
+          content: new ObjectId(request.body.contentId),
+          author: new ObjectId(session.user._id),
+        };
+
+        await db.collection("like").deleteOne(result);
+        return response.status(200).json("좋아요 삭제");
       }
     });
 

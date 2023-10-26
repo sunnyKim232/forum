@@ -1,4 +1,4 @@
-import { postCommentOrder, postLikeOrder } from "@/actions/postActions";
+import { postCommentOrder, postLikeOrder } from "@/app/actions/postActions";
 import PostTable from ".//common/PostTable";
 
 export default async function Home() {

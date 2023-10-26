@@ -1,13 +1,16 @@
-import PhotoItem from "./PhotoItem";
-import { getAllPhotos } from "@/actions/uploadActions";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
-import Link from "next/link";
+import { fetchPhoto } from "../actions/photoActions";
+import dynamic from "next/dynamic";
+
+const NoSSRPhoto = dynamic(() => import("./InfiniteScrollPhoto"), {
+  ssr: false,
+});
 
 export default async function List() {
   let session = await getServerSession(authOptions);
 
-  const photos = await getAllPhotos();
+  const photos = await fetchPhoto();
 
   return (
     <div
@@ -27,23 +30,7 @@ export default async function List() {
       ) : (
         <p>등록된 사진이 없습니다.</p>
       )} */}
-
-      {photos.length >= 1 ? (
-        photos.map((photo) => {
-          return (
-            <div key={photo.public_id}>
-              <PhotoItem
-                id={photo._id.toString()}
-                url={photo.secure_url}
-                role={session?.user.role}
-                publicId={photo.public_id}
-              />
-            </div>
-          );
-        })
-      ) : (
-        <p>등록된 사진이 없습니다.</p>
-      )}
+      <NoSSRPhoto initialPhoto={photos} session={session} />
     </div>
   );
 }

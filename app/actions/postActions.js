@@ -1,4 +1,12 @@
+"use server";
+
 import { connectDB } from "@/util/database";
+import { getPost } from "@/lib/mongo/post";
+
+export async function fetchPost({ page }) {
+  const { post } = await getPost({ page: page });
+  return post;
+}
 
 export async function postCurrentOrder() {
   const db = (await connectDB).db("forum");

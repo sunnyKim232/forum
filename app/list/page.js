@@ -1,34 +1,20 @@
-import { connectDB } from "@/util/database";
-import ListItem from "./ListItem";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
+import { Suspense } from "react";
+import dynamic from "next/dynamic";
+import Loading from "../error";
+import { fetchPost } from "../actions/postActions";
 
-export const dynamic = "force-dynamic";
+const NoSSRPost = dynamic(() => import("./InfiniteScrollPost"), { ssr: false });
 
 export default async function List() {
-  const db = (await connectDB).db("forum");
-  let result = await db.collection("post").find().toArray();
-  result.sort((a, b) => a._id.getTimestamp() - b._id.getTimestamp());
   let session = await getServerSession(authOptions);
+  const result = await fetchPost({ page: 1 });
   return (
     <div className="list-bg">
-      {result.reverse().length >= 1 ? (
-        result.map((item) => {
-          return (
-            <>
-              <ListItem
-                contentId={item._id.toString()}
-                title={item.title}
-                content={item.content}
-                author={item.author ? item.author : null}
-                session={session}
-              />
-            </>
-          );
-        })
-      ) : (
-        <p>등록된 글이 없습니다.</p>
-      )}
+      <Suspense fallback={<Loading />}>
+        <NoSSRPost initialPost={result} session={session}></NoSSRPost>
+      </Suspense>
     </div>
   );
 }

@@ -7,9 +7,8 @@ import cloudinary from "cloudinary";
 import { revalidatePath } from "next/cache";
 import { connectDB } from "@/util/database";
 import { getServerSession } from "next-auth";
-import { authOptions } from "../pages/api/auth/[...nextauth]";
+import { authOptions } from "../../pages/api/auth/[...nextauth]";
 import Photo from "@/models/photoModel";
-import { ObjectId } from "mongodb";
 
 cloudinary.config({
   cloud_name: process.env.CLOUD_NAME,
@@ -24,8 +23,6 @@ async function savePhotosToLocal(formData) {
       const buffer = Buffer.from(data);
       const name = uuidv4();
       const ext = file.type.split("/")[1];
-
-      //   const uploadDir = path.join(process.cwd(), "public", `/${name}.${ext}`);
 
       const tempDir = os.tmpdir();
       const uploadDir = path.join(tempDir, `/${name}.${ext}`);
@@ -82,61 +79,6 @@ export async function uploadPhoto(formData) {
 
       await delay(1000);
     }
-  } catch (e) {
-    return { errMsg: e.message };
-  }
-}
-
-export async function getAllPhotos() {
-  try {
-    // cloudinary 에서 찾아서 보여주는건 로딩 시간이 오래걸림
-    // const { resources } = await cloudinary.v2.search
-    //   .expression("folder:nextjs_upload/*")
-    //   .sort_by("created_at", "desc")
-    //   .max_results(500)
-    //   .execute();
-
-    const db = (await connectDB).db("forum");
-    const resources = await db
-      .collection("photos")
-      .find()
-      .sort("createdDate")
-      .toArray();
-
-    return resources.reverse();
-  } catch (e) {
-    return { errMsg: e.message };
-  }
-}
-
-export async function deletePhoto(public_id) {
-  try {
-    const db = (await connectDB).db("forum");
-    await db.collection("photos").deleteOne({ _id: new ObjectId(public_id) });
-
-    await cloudinary.v2.uploader.destroy(public_id);
-
-    return { msg: "success!" };
-  } catch (e) {
-    return { errMsg: e.message };
-  }
-}
-
-export async function getPhoto(id) {
-  try {
-    // cloudinary 에서 찾아서 보여주는건 로딩 시간이 오래걸림
-    // const { resources } = await cloudinary.v2.search
-    //   .expression("folder:nextjs_upload/*")
-    //   .sort_by("created_at", "desc")
-    //   .max_results(500)
-    //   .execute();
-
-    const db = (await connectDB).db("forum");
-    const photo = await db
-      .collection("photos")
-      .findOne({ _id: new ObjectId(id) });
-
-    return photo;
   } catch (e) {
     return { errMsg: e.message };
   }

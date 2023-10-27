@@ -1,6 +1,6 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
-import { fetchPhoto } from "../actions/photoActions";
+import { fetchPhoto } from "../../actions/photoActions";
 import dynamic from "next/dynamic";
 
 const NoSSRPhoto = dynamic(() => import("./InfiniteScrollPhoto"), {

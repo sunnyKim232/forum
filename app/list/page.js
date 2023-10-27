@@ -3,7 +3,7 @@ import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import { Suspense } from "react";
 import dynamic from "next/dynamic";
 import Loading from "../error";
-import { fetchPost } from "../actions/postActions";
+import { fetchPost } from "../../actions/postActions";
 
 const NoSSRPost = dynamic(() => import("./InfiniteScrollPost"), { ssr: false });
 

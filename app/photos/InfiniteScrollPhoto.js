@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useInView } from "react-intersection-observer";
 import PhotoItem from "./PhotoItem";
-import { fetchPhoto } from "../actions/photoActions";
+import { fetchPhoto } from "../../actions/photoActions";
 
 const InfiniteScrollPhoto = ({ initialPhoto, session }) => {
   const [photos, setPhotos] = useState(initialPhoto);

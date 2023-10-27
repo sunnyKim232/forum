@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
 import { GoX } from "react-icons/go";
 import ButtonSubmit from "./ButtonSubmit";
-import { uploadPhoto } from "@/app/actions/uploadActions";
+import { uploadPhoto } from "@/actions/uploadActions";
 
 export default function ImageUpload({ userId }) {
   const imgRef = useRef();

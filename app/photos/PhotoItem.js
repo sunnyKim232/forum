@@ -1,10 +1,10 @@
 "use client";
 
-import { revalidate } from "@/app/actions/uploadActions";
+import { revalidate } from "@/actions/uploadActions";
 import Image from "next/image";
 import Link from "next/link";
 import { useTransition } from "react";
-import { deletePhoto } from "../actions/photoActions";
+import { deletePhoto } from "../../actions/photoActions";
 
 export default function PhotoItem({ id, url, role, publicId }) {
   const [isPending, startTransition] = useTransition();

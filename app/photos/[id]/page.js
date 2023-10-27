@@ -1,4 +1,4 @@
-import { getPhoto } from "@/app/actions/photoActions";
+import { getPhoto } from "@/actions/photoActions";
 import PhotoDetail from "./PhotoDetail";
 
 export default async function main(props) {

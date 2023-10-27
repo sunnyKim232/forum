@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import ListItem from "./ListItem";
 import { useInView } from "react-intersection-observer";
-import { fetchPost } from "../actions/postActions";
+import { fetchPost } from "../../actions/postActions";
 
 const InfiniteScrollPost = ({ initialPost, session }) => {
   const [post, setPost] = useState(initialPost);

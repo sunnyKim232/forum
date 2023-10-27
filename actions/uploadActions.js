@@ -7,13 +7,13 @@ import cloudinary from "cloudinary";
 import { revalidatePath } from "next/cache";
 import { connectDB } from "@/util/database";
 import { getServerSession } from "next-auth";
-import { authOptions } from "../../pages/api/auth/[...nextauth]";
 import Photo from "@/models/photoModel";
+import { authOptions } from "@/pages/api/auth/[...nextauth]";
 
 cloudinary.config({
-  cloud_name: process.env.CLOUD_NAME,
-  api_key: process.env.CLOUD_API_KEY,
-  api_secret: process.env.CLOUD_API_SECRET,
+  cloud_name: process.env.NEXT_PUBLIC_CLOUD_NAME,
+  api_key: process.env.NEXT_PUBLIC_CLOUD_API_KEY,
+  api_secret: process.env.NEXT_PUBLIC_CLOUD_API_SECRET,
 });
 
 async function savePhotosToLocal(formData) {
@@ -56,11 +56,10 @@ export async function uploadPhoto(formData) {
 
       // claudinary 에 파일 저장
       const photos = await uploadPhotosToCloudinary(newFiles);
-
       // 업로드 후  temp 폴더에 있는 사진 삭제해줌 (?)
       newFiles.map((file) => fs.link(file.filepath));
 
-      // db 저장
+      // // db 저장
 
       const newPhotos = photos.map((photo) => {
         const newPhoto = new Photo({

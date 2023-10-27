@@ -67,6 +67,7 @@ a {
 .dark-mode p,
 .dark-mode span,
 .dark-mode h4,
+.dark-mode h3,
 .dark-mode .logo {
   color: white;
 }

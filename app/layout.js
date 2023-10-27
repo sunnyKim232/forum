@@ -89,6 +89,10 @@ export default async function RootLayout({ children }) {
           </div>
         </div>
         {children}
+
+        <div style={{ padding: "10px" }}>
+          <p style={{ textAlign: "center", margin: 0 }}>Made by Sunny Kim</p>
+        </div>
       </body>
     </html>
   );

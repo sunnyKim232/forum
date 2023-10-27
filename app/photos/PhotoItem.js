@@ -1,10 +1,9 @@
 "use client";
 
-import { revalidate } from "@/actions/uploadActions";
+import { deletePhoto, revalidate } from "@/actions/photoActions";
 import Image from "next/image";
 import Link from "next/link";
 import { useTransition } from "react";
-import { deletePhoto } from "../../actions/photoActions";
 
 export default function PhotoItem({ id, url, role, publicId }) {
   const [isPending, startTransition] = useTransition();
@@ -15,13 +14,14 @@ export default function PhotoItem({ id, url, role, publicId }) {
         if (r.status == 200) {
           return r.json();
         } else {
-          //서버가 에러코드전송시 실행할코드
+          console.log("error:" + r.errMsg);
         }
       })
       .then(() => {
-        e.target.parentElement.parentElement.style.opacity = 0;
+        e.target.parentElement.parentElement.parentElement.style.opacity = 0;
         setTimeout(() => {
-          e.target.parentElement.parentElement.style.display = "none";
+          e.target.parentElement.parentElement.parentElement.style.display =
+            "none";
         }, 1000);
 
         revalidate("/photos");
